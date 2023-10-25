@@ -1,25 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { useEffect, useState } from "react";
+import useStoreData from "./hooks/useStoreData";
+import useHttp from "./hooks/useHttp";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import BaseUrlConfigurator from "./views/BaseUrlConfigurator";
+import dotenv from 'dotenv';
 
 function App() {
+  const [loading, setLoading] = useState(false);
+  const storeData:any = useStoreData("http");
+  const http:any = useHttp();
+  // dotenv.config();
+  
+  function submitData(){
+    http.request('get', '/crud').then((res:any)=>{
+      console.log(res);
+    })
+  }
+
+  useEffect(() => {
+    setLoading(storeData?.loading);
+  }, [storeData]);
+
   return (
+    <Router>
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {loading && <span>Loading...</span>}
+      <span>hello</span>
+      <button onClick={submitData}>submit</button>
+      <Routes>
+        <Route path="/config"  Component={BaseUrlConfigurator} />
+      </Routes>
     </div>
+    </Router>
   );
 }
 

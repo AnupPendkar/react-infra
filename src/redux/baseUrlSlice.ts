@@ -18,6 +18,7 @@ function setOriginalUrlFromLs(url:string){
     return localStorage.setItem('originalBaseUrl', url);
 }
 
+
 let activeBaseUrl = getActiveUrlFromLs();
 let originalBaseUrl = getOriginalUrlFromLs();
 const {REACT_APP_API_URL} = process.env;

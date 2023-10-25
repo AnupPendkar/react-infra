@@ -4,16 +4,14 @@ import useStoreData from "./hooks/useStoreData";
 import useHttp from "./hooks/useHttp";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import BaseUrlConfigurator from "./views/BaseUrlConfigurator";
-import dotenv from 'dotenv';
 
 function App() {
   const [loading, setLoading] = useState(false);
-  const storeData:any = useStoreData("http");
-  const http:any = useHttp();
-  // dotenv.config();
+  const storeData = useStoreData("http");
+  const http = useHttp();
   
   function submitData(){
-    http.request('get', '/crud').then((res:any)=>{
+    http.request('get', '/crud').then((res)=>{
       console.log(res);
     })
   }

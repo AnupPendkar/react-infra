@@ -1,6 +1,9 @@
+import { request } from "http";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { makeRequest } from "../redux/axiosRequestslice";
 import { AppDispatch } from "../redux/store";
+import AxiosHttp from "../services/HttpService";
 
 export interface ReqMetaData {
   method: string;
@@ -13,18 +16,12 @@ const useHttp = () => {
   const dispatch: AppDispatch = useDispatch();
 
   function request(method: string, url: string, params = "", body = "") {
-    return new Promise((resolve) => {
-      const requestPayload: ReqMetaData = {
-        method,
-        url,
-        params,
-        body,
-      };
-
-      dispatch(makeRequest(requestPayload)).then((res) => {
-        resolve(res?.payload);
-      });
-    });
+    const reqMetaData: ReqMetaData = {
+      method,
+      url,
+      params,
+      body,
+    };
   }
 
   return { request };

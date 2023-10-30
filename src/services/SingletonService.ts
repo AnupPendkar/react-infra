@@ -1,15 +1,11 @@
-import React, {useState, useEffect} from 'react'
+import { AppDispatch } from "../redux/store";
 
-const SingletonService = () => {
-    const [baseUrl ,setBaseUrl] = useState();
+export default class SingletonService {
+  hook: any;
 
-    function setApplicationBaseUrl(){
-        console.log('ds')
-    }
+  constructor(dispatch: AppDispatch) {}
 
-    useEffect(() => {
-        setApplicationBaseUrl();
-    }, [])
+  submitData() {
+    console.log("data submitted.");
+  }
 }
-
-export default SingletonService

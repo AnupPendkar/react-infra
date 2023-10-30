@@ -29,7 +29,6 @@ const axiosInstance = axios.create({
 });
 
 function getInitialState(){
-    console.log('called')
     if(isPropEmpty(activeBaseUrl) && !isPropEmpty(originalBaseUrl)){
         activeBaseUrl = originalBaseUrl;
         setActiveUrlFromLs(activeBaseUrl as string);

@@ -1,18 +1,17 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { ReqMetaData } from "../services/HttpService";
 import { axiosInstance } from "./baseUrlSlice";
-import { ReqMetaData } from "../hooks/useHttp";
-
-interface axiosState {
+export interface axiosState {
   loading: boolean;
-  error: any;
+  error: boolean;
 }
 
 export const makeRequest = createAsyncThunk(
   "Request",
   async (param: ReqMetaData, { rejectWithValue }) => {
     const axiosConfig = {
-      method: param?.method,
-      url: param?.url,
+      method: param.method,
+      url: param.url,
       data: param?.body,
     };
 
@@ -20,14 +19,14 @@ export const makeRequest = createAsyncThunk(
       const response = await axiosInstance(axiosConfig);
       return response;
     } catch (err) {
-      rejectWithValue(err);
+      rejectWithValue("Failed to fetch issues.");
     }
   }
 );
 
 const initialState: axiosState = {
   loading: false,
-  error: null,
+  error: false,
 };
 
 const axiosRequest = createSlice({
@@ -38,13 +37,15 @@ const axiosRequest = createSlice({
     builder
       .addCase(makeRequest.pending, (state) => {
         state.loading = true;
+        state.error = false;
       })
       .addCase(makeRequest.fulfilled, (state) => {
         state.loading = false;
+        state.error = false;
       })
       .addCase(makeRequest.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
-        state.error = action?.payload;
+        state.error = true;
       });
   },
 });

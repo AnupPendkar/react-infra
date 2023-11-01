@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { changeBaseUrl } from "../redux/baseUrlSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +15,7 @@ const BaseUrlConfigurator = () => {
     );
     dispatch(changeBaseUrl(promptData));
     navigate("/");
-  }, []);
+  });
 
   return <div></div>;
 };

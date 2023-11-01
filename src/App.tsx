@@ -1,18 +1,13 @@
 import "./App.css";
 import { useEffect, useState } from "react";
-import useStoreData from "./hooks/useStoreData";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import BaseUrlConfigurator from "./views/BaseUrlConfigurator";
-import HttpService from "./services/HttpService";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "./redux/store";
+import { useAppSelector } from "./redux/store";
 import VIew1 from "./views/VIew1";
 
 function App() {
   const [loading, setLoading] = useState(false);
-  const storeData = useStoreData("http");
-  const dispatch: AppDispatch = useDispatch();
-  const http = new HttpService(dispatch);
+  const storeData = useAppSelector((state) => state?.http);
 
   const Loader = () => (
     <div

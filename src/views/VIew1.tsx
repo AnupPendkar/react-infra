@@ -1,10 +1,9 @@
-import useServiceInjector from "../hooks/useServiceInjector";
-import AxiosHttp from "../services/HttpService";
+import HttpService from "../services/HttpService";
 import SingletonService from "../services/SingletonService";
 
 const VIew1 = () => {
-  const http: AxiosHttp = useServiceInjector(AxiosHttp);
-  const ss: SingletonService = useServiceInjector(SingletonService);
+  const http = new HttpService();
+  const ss = new SingletonService();
 
   const submitDetails = () => {
     http.request("get", "/todo1")?.then((res) => {

@@ -1,5 +1,5 @@
 import { makeRequest } from "../redux/axiosRequestslice";
-import { AppDispatch } from "../redux/store";
+import { useAppDispatch } from "../redux/store";
 
 export interface ReqMetaData {
   method: string;
@@ -7,13 +7,10 @@ export interface ReqMetaData {
   params: string;
   body: any;
 }
-
 export default class HttpService {
-  dispatch!: AppDispatch;
+  appDispatch = useAppDispatch();
 
-  constructor(dispatch: AppDispatch) {
-    this.dispatch = dispatch;
-  }
+  constructor() {}
 
   request(method: string, url: string, params = "", body = ""): Promise<any> {
     return new Promise((resolve) => {
@@ -24,7 +21,8 @@ export default class HttpService {
         body,
       };
 
-      this.dispatch(makeRequest(requestPayload)).then((res) => {
+      this.appDispatch(makeRequest(requestPayload)).then((res) => {
+        console.log(res)
         resolve(res?.payload);
       });
     });

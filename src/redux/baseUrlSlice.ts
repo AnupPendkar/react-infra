@@ -1,60 +1,39 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { isPropEmpty } from "../shared/utilfunctions";
-import axios from "axios";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import axios, { AxiosInstance } from "axios";
+import DyBaseUrlConfigurator from "../shared/dyBaseUrlConfigurator";
 
-function getActiveUrlFromLs(){
-    return localStorage.getItem('activeBaseUrl');
+let baseUrl: string;
+let axiosInstance: AxiosInstance;
+const dyBaseUrlConfigurator = new DyBaseUrlConfigurator();
+
+function createAxiosInsFromApiUrl() {
+  axiosInstance = axios.create({
+    baseURL: baseUrl as string,
+  });
 }
 
-function getOriginalUrlFromLs(){
-    return localStorage.getItem('originalBaseUrl');
+function initBaseUrlAndCreateAxiosIns() {
+  dyBaseUrlConfigurator.initBaseURLConfigurator();
+  baseUrl = dyBaseUrlConfigurator.baseUrl as string;
+  createAxiosInsFromApiUrl();
 }
 
-function setActiveUrlFromLs(url:string){
-    return localStorage.setItem('activeBaseUrl', url);
-}
-
-function setOriginalUrlFromLs(url:string){
-    return localStorage.setItem('originalBaseUrl', url);
-}
-
-
-let activeBaseUrl = getActiveUrlFromLs();
-let originalBaseUrl = getOriginalUrlFromLs();
-const {REACT_APP_API_URL} = process.env;
-let envDefaultBaseUrl = new URL(REACT_APP_API_URL as string);
-console.log(process.env.REACT_APP_API_URL, envDefaultBaseUrl)
-const axiosInstance = axios.create({
-    baseURL: REACT_APP_API_URL as string,
-});
-
-function getInitialState(){
-    if(isPropEmpty(activeBaseUrl) && !isPropEmpty(originalBaseUrl)){
-        activeBaseUrl = originalBaseUrl;
-        setActiveUrlFromLs(activeBaseUrl as string);
-        
-    }else if(isPropEmpty(activeBaseUrl) && isPropEmpty(originalBaseUrl)){
-        activeBaseUrl = originalBaseUrl = envDefaultBaseUrl?.href;
-        setActiveUrlFromLs(activeBaseUrl as string);
-        setOriginalUrlFromLs(originalBaseUrl as string);
-    }
-
-    return {baseUrl: activeBaseUrl};
+function getInitialState() {
+  initBaseUrlAndCreateAxiosIns();
+  return { baseUrl };
 }
 
 const baseUrlSlice = createSlice({
-    name: 'baseUrl',
-    initialState: getInitialState(),
-    reducers: {
-        changeBaseUrl: (state, action)=>{
-            state.baseUrl = action.payload
-            activeBaseUrl = action.payload
-            setActiveUrlFromLs(action.payload)
-            axiosInstance.defaults.baseURL = activeBaseUrl as string;
-        }
-    }
-})
+  name: "baseUrl",
+  initialState: getInitialState(),
+  reducers: {
+    changeBaseUrl: (state, action: PayloadAction<string>) => {
+      state.baseUrl = action.payload;
+      axiosInstance.defaults.baseURL = state.baseUrl as string;
+    },
+  },
+});
 
 export const { changeBaseUrl } = baseUrlSlice.actions;
-export {axiosInstance};
-export default baseUrlSlice.reducer
+export { axiosInstance };
+export default baseUrlSlice.reducer;

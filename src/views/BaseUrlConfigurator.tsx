@@ -1,20 +1,23 @@
 import { useEffect } from "react";
-import { changeBaseUrl } from "../redux/baseUrlSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { changeBaseUrl } from "../redux/baseUrlSlice";
+import DyBaseUrlConfigurator from "../shared/dyBaseUrlConfigurator";
 
 const BaseUrlConfigurator = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const dyBaseUrlConfigurator = new DyBaseUrlConfigurator();
 
   useEffect(() => {
-    const baseUrl: string | null = localStorage.getItem("activeBaseUrl");
-    const promptData = prompt(
-      "Enter a url",
-      baseUrl ?? `http://127.0.0.0:8005/api`
-    );
-    dispatch(changeBaseUrl(promptData));
-    navigate("/");
+    dyBaseUrlConfigurator.invokePrompt().then((res) => {
+      if (res) {
+        dispatch(changeBaseUrl(dyBaseUrlConfigurator.baseUrl as string));
+        navigate("/app");
+        dyBaseUrlConfigurator.reloadWindow();
+      } else {
+      }
+    });
   });
 
   return <div></div>;

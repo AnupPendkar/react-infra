@@ -8,7 +8,6 @@ const VIew1 = () => {
   const submitDetails = () => {
     http.request("get", "/todo1")?.then((res) => {
       ss.submitData();
-      console.log("In view", res);
     });
   };
 

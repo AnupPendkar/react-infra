@@ -9,11 +9,12 @@ export interface axiosState {
 export const makeRequest = createAsyncThunk(
   "Request",
   async (param: ReqMetaData, { rejectWithValue }) => {
-    const axiosConfig = {
-      method: param.method,
-      url: param.url,
-      data: param?.body,
-    };
+    const axiosConfig = { ...param };
+    // const axiosConfig = {
+    //   method: param.method,
+    //   url: param.url,
+    //   body: param?.body,
+    // };
 
     try {
       const response = await axiosInstance(axiosConfig);

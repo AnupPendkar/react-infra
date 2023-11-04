@@ -4,10 +4,12 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import BaseUrlConfigurator from "./views/BaseUrlConfigurator";
 import { useAppSelector } from "./redux/store";
 import VIew1 from "./views/VIew1";
+import DyBaseUrlConfigurator from "./shared/dyBaseUrlConfigurator";
 
 function App() {
   const [loading, setLoading] = useState(false);
   const storeData = useAppSelector((state) => state?.http);
+  const dyBaseUrlConfigurator = new DyBaseUrlConfigurator();
 
   const Loader = () => (
     <div

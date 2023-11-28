@@ -1,14 +1,16 @@
-import HttpService from "../services/HttpService";
-import SingletonService from "../services/SingletonService";
+import useHttp from "../hooks/useHttp";
 
 const VIew1 = () => {
-  const http = new HttpService();
-  const ss = new SingletonService();
+  const http = useHttp();
 
   const submitDetails = () => {
-    http.request("get", "/todo1")?.then((res) => {
-      ss.submitData();
-    });
+    http
+      .request("get", "/warehouse/filter", {
+        warehouse_id: "wh1",
+      })
+      ?.then((res) => {
+        console.log(res);
+      });
   };
 
   return (

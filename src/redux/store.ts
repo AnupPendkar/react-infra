@@ -1,17 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
-import axiosRequest, { axiosState } from "./axiosRequestslice";
+import axiosRequest from "./axiosRequestslice";
 import baseUrlSlice from "./baseUrlSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-export interface ReducerStates {
-  http: axiosState;
-  baseUrl: string;
-}
+import userSlice from "./userSlice";
 
 export const store = configureStore({
   reducer: {
     http: axiosRequest,
     baseUrl: baseUrlSlice,
+    user: userSlice,
   },
   devTools: true,
 });
@@ -21,4 +19,5 @@ export type AppDispatch = typeof store.dispatch;
 export const storeReducers = store.getState();
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppNavigate = () => useNavigate();
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector<RootState>;
+export const useAppSelector: TypedUseSelectorHook<RootState> =
+  useSelector<RootState>;

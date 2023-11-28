@@ -1,15 +1,24 @@
-import "./App.css";
+import "./App.scss";
 import { useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  HashRouter as Router,
+  Navigate,
+  Route,
+  Routes,
+} from "react-router-dom";
 import BaseUrlConfigurator from "./views/BaseUrlConfigurator";
 import { useAppSelector } from "./redux/store";
 import VIew1 from "./views/VIew1";
-import DyBaseUrlConfigurator from "./shared/dyBaseUrlConfigurator";
+import Login from "./views/login/Login";
+import useSocket from "./hooks/useSocket";
+import { UseSocket } from "./models/common";
 
 function App() {
   const [loading, setLoading] = useState(false);
-  const storeData = useAppSelector((state) => state?.http);
-  const dyBaseUrlConfigurator = new DyBaseUrlConfigurator();
+  const socket: UseSocket = useSocket();
+  const apiInfo = useAppSelector((state) => state?.http);
+  const userVar = useAppSelector((state) => state?.user);
+  const userInfo = useAppSelector((state) => state.user);
 
   const Loader = () => (
     <div
@@ -32,14 +41,35 @@ function App() {
   );
 
   useEffect(() => {
-    setLoading(storeData?.loading);
-  }, [storeData]);
+    console.log("loading useEffect");
+    setLoading(apiInfo?.loading);
+  }, [apiInfo]);
+
+  useEffect(() => {
+    console.log("socket");
+    if (userInfo?.userLoggedIn) {
+      console.log("logged in");
+      socket.connect();
+    }
+  }, [userInfo]);
 
   return (
     <Router>
       <div className="App">
+        {socket.isConnected ? "Socket Connected" : "Socket Disconnected"}
         {loading && <Loader />} {/* Loader */}
         <Routes>
+          <Route
+            path="/"
+            element={
+              !userVar.userLoggedIn ? (
+                <Navigate to="/login" />
+              ) : (
+                <Navigate to="/app" />
+              )
+            }
+          />
+          <Route path="/login" Component={Login} />
           <Route path="/app" Component={VIew1} />
           <Route path="/config" Component={BaseUrlConfigurator} />
         </Routes>

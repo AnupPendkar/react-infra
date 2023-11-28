@@ -1,11 +1,11 @@
-import SingletonService from "../services/SingletonService";
-import { strCmp } from "./utilfunctions";
+import { IJWTPayload, ParsedUserInfo } from "../models/common";
+import { isPropEmpty, strCmp } from "./utilfunctions";
 
 export default class DyBaseUrlConfigurator {
   baseUrl = process.env.REACT_APP_API_URL;
   private __baseurlInstance = new URL(this.baseUrl as string);
+  parsedUserInfo!: ParsedUserInfo;
 
-  ss = new SingletonService();
   get serverAddress(): string {
     return this.__baseurlInstance?.hostname;
   }
@@ -15,6 +15,22 @@ export default class DyBaseUrlConfigurator {
 
   get activeBaseUrl(): string | null {
     return localStorage.getItem("activeBaseUrl");
+  }
+
+  set setAccesstoken(token: string) {
+    localStorage.setItem("access_token", token);
+  }
+
+  set setRefreshtoken(token: string) {
+    localStorage.setItem("refresh_token", token);
+  }
+
+  get jwtAccesToken(): string | null {
+    return localStorage.getItem("access_token");
+  }
+
+  get jwtRefreshToken(): string | null {
+    return localStorage.getItem("refresh_token");
   }
 
   get originalBaseUrl(): string | null {
@@ -35,8 +51,47 @@ export default class DyBaseUrlConfigurator {
     }
   }
 
+  setParsedTokenData() {
+    const parsedTokenData = this.parseJwt(this.jwtAccesToken as string);
+    this.parsedUserInfo = {
+      id: parsedTokenData?.identity?.groups?.[0]?.id,
+      username: parsedTokenData?.identity?.username,
+      role: parsedTokenData?.identity?.groups?.[0]?.name,
+      token: this.jwtAccesToken as string,
+      description: parsedTokenData?.identity?.groups?.[0]?.description,
+      permissions: parsedTokenData?.identity?.groups?.[0]?.permissions,
+      tokenIssueEpoch: parsedTokenData?.iat,
+      tokenExpEpoch: parsedTokenData?.exp,
+    };
+  }
+
+  parseJwt(token: string): IJWTPayload {
+    var base64Url = token.split(".")[1];
+    var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    var jsonPayload = decodeURIComponent(
+      window
+        .atob(base64)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join("")
+    );
+
+    return JSON.parse(jsonPayload);
+  }
+
+  setActiveBaseIfNotPresent() {
+    if (isPropEmpty(this.activeBaseUrl)) {
+      this.setActiveBaseUrl = this.originalBaseUrl as string;
+    }
+  }
+
   initBaseURLConfigurator(apiUrl?: string) {
-    this.baseUrl = apiUrl;
+    this.baseUrl = apiUrl ?? process.env.REACT_APP_API_URL;
+    this.setOriginalBaseUrl = this.baseUrl as string;
+    this.setActiveBaseIfNotPresent();
+
     if (this.canOverrideAPI()) {
       this.baseUrl = this.activeBaseUrl as string;
     }
@@ -62,7 +117,7 @@ export default class DyBaseUrlConfigurator {
 
   logConnectionDetails() {
     console.log(
-      `==================\nCONNECTION DETAILS\n==================\n${"REACT_INFRA"}\nBuild ` +
+      `==================\nCONNECTION DETAILS\n==================\n${"REACT_INFRA"} ` +
         "\nServer: " +
         this.serverAddress +
         "\nPort: " +
@@ -96,7 +151,6 @@ export default class DyBaseUrlConfigurator {
   }
 
   invokePrompt(isInvokedViaRoute = false): Promise<boolean> {
-    console.log('prompt called')
     return new Promise((resolve) => {
       const updatedSegment = prompt(
         "\nEdit base URL segments and click OK, page will reload if the new URL is different.\n\nNote: you can clear the input box and click OK to force a reset of the base URL configuration.\n\nEnter new base URL:",
@@ -123,7 +177,7 @@ export default class DyBaseUrlConfigurator {
           this.reloadWindow();
         } else {
           resolve(false);
-        //   this.navigatorBack(isInvokedViaRoute);
+          //   this.navigatorBack(isInvokedViaRoute);
         }
 
         return;

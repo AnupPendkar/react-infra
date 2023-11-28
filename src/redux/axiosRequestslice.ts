@@ -1,26 +1,64 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { ReqMetaData } from "../services/HttpService";
-import { axiosInstance } from "./baseUrlSlice";
-export interface axiosState {
-  loading: boolean;
-  error: boolean;
+import axios, { AxiosInstance } from "axios";
+import { axiosState, ReqMetaData } from "../models/common";
+import DyBaseUrlConfigurator from "../shared/dyBaseUrlConfigurator";
+import { isPropEmpty } from "../shared/utilfunctions";
+
+let axiosInstance: AxiosInstance;
+const dyBaseUrlConfigurator = new DyBaseUrlConfigurator();
+
+function requestAxiosInterceptors() {
+  axiosInstance.interceptors.request.use(
+    (res) => {
+      if (!isPropEmpty(dyBaseUrlConfigurator.jwtAccesToken)) {
+        res.headers[
+          "Authorization"
+        ] = `Bearer ${dyBaseUrlConfigurator.jwtAccesToken}`;
+      }
+      return res;
+    },
+    (error) => {
+      console.log("request", error);
+      return Promise.reject(error);
+    }
+  );
+
+  axiosInstance.interceptors.response.use(
+    (res) => {
+      return res;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+}
+
+function createAxiosInsFromBaseUrl(baseUrl: string) {
+  axiosInstance = axios.create({
+    baseURL: baseUrl,
+  });
+
+  requestAxiosInterceptors();
 }
 
 export const makeRequest = createAsyncThunk(
   "Request",
-  async (param: ReqMetaData, { rejectWithValue }) => {
+  async (param: ReqMetaData) => {
     const axiosConfig = { ...param };
-    // const axiosConfig = {
-    //   method: param.method,
-    //   url: param.url,
-    //   body: param?.body,
-    // };
 
     try {
       const response = await axiosInstance(axiosConfig);
-      return response;
-    } catch (err) {
-      rejectWithValue("Failed to fetch issues.");
+      return {
+        data: response?.data,
+        status: response?.status,
+        statusText: response?.statusText,
+      };
+    } catch (err: any) {
+      return {
+        data: err?.response?.data,
+        status: err?.response?.status,
+        statusText: err?.response?.statusText,
+      };
     }
   }
 );
@@ -51,4 +89,6 @@ const axiosRequest = createSlice({
   },
 });
 
+export { createAxiosInsFromBaseUrl };
+export { axiosInstance };
 export default axiosRequest.reducer;

@@ -13,9 +13,10 @@ const BaseUrlConfigurator = () => {
     dyBaseUrlConfigurator.invokePrompt().then((res) => {
       if (res) {
         dispatch(changeBaseUrl(dyBaseUrlConfigurator.baseUrl as string));
-        navigate("/app");
+        navigate("/");
         dyBaseUrlConfigurator.reloadWindow();
       } else {
+        navigate("/");
       }
     });
   });

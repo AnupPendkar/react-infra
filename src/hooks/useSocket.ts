@@ -1,8 +1,12 @@
 import { useState } from "react";
 import * as socketIo from "socket.io-client";
-import { AppWebSocketNSPEnum, UseSocket, WSEventNameEnum } from "../models/common";
-import { useAppSelector } from "../redux/store";
-import DyBaseUrlConfigurator from "../shared/dyBaseUrlConfigurator";
+import {
+  AppWebSocketNSPEnum,
+  UseSocket,
+  WSEventNameEnum,
+} from "@models/common";
+import { useAppSelector } from "@redux/store";
+import DyBaseUrlConfigurator from "@shared/dyBaseUrlConfigurator";
 
 interface ISocketClient {
   namespace: AppWebSocketNSPEnum;
@@ -69,7 +73,7 @@ const useSocket = (): UseSocket => {
           username: userInfo.parsedUserInfo?.username,
           token: userInfo.parsedUserInfo?.token,
         },
-        (response: any, cb: any) => {
+        (response: any) => {
           // 401 is agreed by server to be an authentication failure signal.
           if (response === 401) {
             console.error(

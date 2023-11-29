@@ -1,13 +1,12 @@
 import "./login.scss";
 import { useFormik } from "formik";
-import { useEffect } from "react";
-import { getHashedString } from "../../shared/utilfunctions";
-import DyBaseUrlConfigurator from "../../shared/dyBaseUrlConfigurator";
+import React, { useEffect } from "react";
+import { getHashedString } from "@shared/utilfunctions";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import useHttp from "../../hooks/useHttp";
-import { useAppDispatch, useAppSelector } from "../../redux/store";
-import { setUserInfo } from "../../redux/userSlice";
+import useHttp from "@hooks/useHttp";
+import { useAppSelector } from "@redux/store";
+import useUserMethod from "@hooks/useUserMethod";
 
 interface LoginFormInput {
   username: string;
@@ -16,11 +15,10 @@ interface LoginFormInput {
 
 const Login = () => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const userMethod = useUserMethod();
   const user = useAppSelector((state) => state.user);
   const http = useHttp();
 
-  const dybaseConfigurator = new DyBaseUrlConfigurator();
   const validationSchema: Yup.Schema<LoginFormInput> = Yup.object().shape({
     username: Yup.string()
       .required("Required")
@@ -38,17 +36,7 @@ const Login = () => {
       })
       .then((res) => {
         if (res?.status === 200) {
-          dybaseConfigurator.setAccesstoken = res?.data?.access;
-          dybaseConfigurator.setRefreshtoken = res?.data?.refresh;
-          dybaseConfigurator.setParsedTokenData();
-
-          dispatch(
-            setUserInfo({
-              status: true,
-              info: dybaseConfigurator.parsedUserInfo,
-            })
-          );
-
+          userMethod.setUserLoginData(res?.data?.access, res?.data?.refresh);
           navigate("/app");
         }
       });

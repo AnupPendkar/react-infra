@@ -1,0 +1,26 @@
+@import "./mixins.scss";
+$ceilCount: 800;
+
+// attr-x($attr, $classname, $attr-count: 10, $attr-steps: 10, $unit: "%", $attr-start: 1)
+
+@include attr-x("font-size", "fs-", 40, 1, "px");
+@include resp-font("font-size", "fsr-");
+@include attr-x("font-weight", "fw-", $ceilCount, 1, "");
+@include attr-x("width", "w-", $ceilCount, 1, "px");
+@include attr-x("height", "h-", $ceilCount, 1, "px");
+@include attr-x("width", "wp-", 200, 1, "%");
+@include attr-x("height", "hp-", 200, 1, "%");
+
+// Generate margins and paddings for classes upto $ceilCount;
+$mgPdCount: 100;
+@include attr-x("margin", "m-", $mgPdCount, 1, "px !important");
+@include attr-x("margin-left", "ml-", $mgPdCount, 1, "px !important");
+@include attr-x("margin-right", "mr-", $mgPdCount, 1, "px !important");
+@include attr-x("margin-top", "mt-", $mgPdCount, 1, "px !important");
+@include attr-x("margin-bottom", "mb-", $mgPdCount, 1, "px !important");
+
+@include attr-x("padding", "p-", $mgPdCount, 1, "px !important");
+@include attr-x("padding-left", "pl-", $mgPdCount, 1, "px !important");
+@include attr-x("padding-right", "pr-", $mgPdCount, 1, "px !important");
+@include attr-x("padding-top", "pt-", $mgPdCount, 1, "px !important");
+@include attr-x("padding-bottom", "pb-", $mgPdCount, 1, "px !important");

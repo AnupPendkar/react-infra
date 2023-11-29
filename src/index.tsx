@@ -1,15 +1,25 @@
-import ReactDOM from 'react-dom/client';
-import './index.scss';
-import App from './App';
-import { Provider } from 'react-redux';
-import { store } from './redux/store';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.scss";
+import App from "./App";
+import axios from "axios";
+import { Provider } from "react-redux";
+import { store } from "@redux/store";
+import DyBaseUrlConfigurator from "@shared/dyBaseUrlConfigurator";
+import { createAxiosInsFromBaseUrl } from "@redux/axiosRequestslice";
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+const dyBaseUrlConfigurator = new DyBaseUrlConfigurator();
+axios.get("assets/config.json").then((res) => {
+  dyBaseUrlConfigurator.initBaseURLConfigurator(res?.data?.baseUrl);
+  createAxiosInsFromBaseUrl(dyBaseUrlConfigurator.baseUrl as string);
 
-root.render(
-  <Provider store={store}>
-    <App />
-  </Provider>
-);
+  const root = ReactDOM.createRoot(
+    document.getElementById("root") as HTMLElement
+  );
+
+  root.render(
+    <Provider store={store}>
+      <App />
+    </Provider>
+  );
+});

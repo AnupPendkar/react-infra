@@ -1,4 +1,5 @@
-import useHttp from "../hooks/useHttp";
+import React from "react";
+import useHttp from "@hooks/useHttp";
 
 const VIew1 = () => {
   const http = useHttp();

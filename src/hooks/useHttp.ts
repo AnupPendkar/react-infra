@@ -1,21 +1,13 @@
 import { useNavigate } from "react-router-dom";
-import { HttpResponse, ReqMetaData } from "../models/common";
-import { makeRequest } from "../redux/axiosRequestslice";
-import { useAppDispatch } from "../redux/store";
-import { setUserInfo } from "../redux/userSlice";
+import { HttpResponse, ReqMetaData } from "@models/common";
+import { makeRequest } from "@redux/axiosRequestslice";
+import { useAppDispatch } from "@redux/store";
+import useUserMethod from "./useUserMethod";
 
 const useHttp = () => {
   const appDispatch = useAppDispatch();
-  const dispatch = useAppDispatch();
+  const userMethod = useUserMethod();
   const navigate = useNavigate();
-
-  const logout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    dispatch(setUserInfo({ status: false }));
-    navigate("/");
-    window.location.reload();
-  };
 
   const request = (
     method: string,
@@ -33,7 +25,8 @@ const useHttp = () => {
 
       appDispatch(makeRequest(requestPayload)).then((res) => {
         if ((res?.payload as HttpResponse)?.status === 401) {
-          logout();
+          userMethod.logout();
+          navigate("/");
           return;
         }
 

@@ -1,10 +1,9 @@
-import { HttpResponse, ReqMetaData } from "../models/common";
-import { makeRequest } from "../redux/axiosRequestslice";
-import { useAppDispatch } from "../redux/store";
-
+import { HttpResponse, ReqMetaData } from "@models/common";
+import { makeRequest } from "@redux/axiosRequestslice";
+import { useAppDispatch } from "@redux/store";
 
 export default class HttpService {
-  appDispatch = useAppDispatch();
+  appDispatch: any = useAppDispatch();
 
   request(method: string, url: string, params: any, body = {}): Promise<any> {
     return new Promise((resolve) => {
@@ -15,7 +14,7 @@ export default class HttpService {
         data: body,
       };
 
-      this.appDispatch(makeRequest(requestPayload)).then((res) => {
+      this.appDispatch(makeRequest(requestPayload)).then((res: any) => {
         resolve(res?.payload as HttpResponse);
       });
     });

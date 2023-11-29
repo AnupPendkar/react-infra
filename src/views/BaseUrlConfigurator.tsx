@@ -1,21 +1,21 @@
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { changeBaseUrl } from "../redux/baseUrlSlice";
-import DyBaseUrlConfigurator from "../shared/dyBaseUrlConfigurator";
+import useUserMethod from "@hooks/useUserMethod";
+import DyBaseUrlConfigurator from "@shared/dyBaseUrlConfigurator";
 
 const BaseUrlConfigurator = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const userMethod = useUserMethod();
   const dyBaseUrlConfigurator = new DyBaseUrlConfigurator();
+
+  const logout = () => {
+    userMethod.logout();
+  };
 
   useEffect(() => {
     dyBaseUrlConfigurator.invokePrompt().then((res) => {
       if (res) {
-        dispatch(changeBaseUrl(dyBaseUrlConfigurator.baseUrl as string));
-        navigate("/");
-        dyBaseUrlConfigurator.reloadWindow();
-      } else {
+        logout();
         navigate("/");
       }
     });

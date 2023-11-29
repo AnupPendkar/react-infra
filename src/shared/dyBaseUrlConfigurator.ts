@@ -1,4 +1,4 @@
-import { IJWTPayload, ParsedUserInfo } from "../models/common";
+import { IJWTPayload, ParsedUserInfo } from "@models/common";
 import { isPropEmpty, strCmp } from "./utilfunctions";
 
 export default class DyBaseUrlConfigurator {
@@ -14,41 +14,35 @@ export default class DyBaseUrlConfigurator {
   }
 
   get activeBaseUrl(): string | null {
-    return localStorage.getItem("activeBaseUrl");
+    return localStorage.getItem("react__active_baseUrl");
   }
 
   set setAccesstoken(token: string) {
-    localStorage.setItem("access_token", token);
+    localStorage.setItem("react__access_token", token);
   }
 
   set setRefreshtoken(token: string) {
-    localStorage.setItem("refresh_token", token);
+    localStorage.setItem("react__refresh_token", token);
   }
 
   get jwtAccesToken(): string | null {
-    return localStorage.getItem("access_token");
+    return localStorage.getItem("react__access_token");
   }
 
   get jwtRefreshToken(): string | null {
-    return localStorage.getItem("refresh_token");
+    return localStorage.getItem("react__refresh_token");
   }
 
   get originalBaseUrl(): string | null {
-    return localStorage.getItem("originalBaseUrl");
+    return localStorage.getItem("react__original_baseUrl");
   }
 
   set setActiveBaseUrl(url: string) {
-    localStorage.setItem("activeBaseUrl", url);
+    localStorage.setItem("react__active_baseUrl", url);
   }
 
   set setOriginalBaseUrl(url: string) {
-    localStorage.setItem("originalBaseUrl", url);
-  }
-
-  navigatorBack(isInvokedViaRoute: boolean) {
-    if (isInvokedViaRoute) {
-      window.history.back();
-    }
+    localStorage.setItem("react__original_baseUrl", url);
   }
 
   setParsedTokenData() {
@@ -66,9 +60,9 @@ export default class DyBaseUrlConfigurator {
   }
 
   parseJwt(token: string): IJWTPayload {
-    var base64Url = token.split(".")[1];
-    var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    var jsonPayload = decodeURIComponent(
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
       window
         .atob(base64)
         .split("")
@@ -139,6 +133,10 @@ export default class DyBaseUrlConfigurator {
     window.open(url, launchTarget);
   }
 
+  navigatorBack() {
+    window.history.back();
+  }
+
   reloadWindow() {
     let currentURL = window.location.href;
 
@@ -150,7 +148,7 @@ export default class DyBaseUrlConfigurator {
     window.location.reload();
   }
 
-  invokePrompt(isInvokedViaRoute = false): Promise<boolean> {
+  invokePrompt(): Promise<boolean> {
     return new Promise((resolve) => {
       const updatedSegment = prompt(
         "\nEdit base URL segments and click OK, page will reload if the new URL is different.\n\nNote: you can clear the input box and click OK to force a reset of the base URL configuration.\n\nEnter new base URL:",
@@ -163,7 +161,7 @@ export default class DyBaseUrlConfigurator {
         strCmp(updatedSegment, this.activeBaseUrl)
       ) {
         resolve(false);
-        // this.navigatorBack(isInvokedViaRoute);
+        this.navigatorBack();
         return;
       }
 
@@ -176,8 +174,8 @@ export default class DyBaseUrlConfigurator {
           this.restoreOriginalBaseURL();
           this.reloadWindow();
         } else {
+          this.navigatorBack();
           resolve(false);
-          //   this.navigatorBack(isInvokedViaRoute);
         }
 
         return;
@@ -186,11 +184,12 @@ export default class DyBaseUrlConfigurator {
       if (!this.isStringValidURL(updatedSegment)) {
         alert("You have entered an invalid URL, no changes were made.");
         resolve(false);
-        // this.navigatorBack(isInvokedViaRoute);
+        this.navigatorBack();
         return;
       }
 
       this.setActiveBaseUrl = updatedSegment;
+      this.reloadWindow();
       resolve(true);
     });
   }

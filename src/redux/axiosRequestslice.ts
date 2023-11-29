@@ -1,8 +1,8 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios, { AxiosInstance } from "axios";
-import { axiosState, ReqMetaData } from "../models/common";
-import DyBaseUrlConfigurator from "../shared/dyBaseUrlConfigurator";
-import { isPropEmpty } from "../shared/utilfunctions";
+import { axiosState, ReqMetaData } from "@models/common";
+import DyBaseUrlConfigurator from "@shared/dyBaseUrlConfigurator";
+import { isPropEmpty } from "@shared/utilfunctions";
 
 let axiosInstance: AxiosInstance;
 const dyBaseUrlConfigurator = new DyBaseUrlConfigurator();
@@ -11,9 +11,8 @@ function requestAxiosInterceptors() {
   axiosInstance.interceptors.request.use(
     (res) => {
       if (!isPropEmpty(dyBaseUrlConfigurator.jwtAccesToken)) {
-        res.headers[
-          "Authorization"
-        ] = `Bearer ${dyBaseUrlConfigurator.jwtAccesToken}`;
+        res.headers["Authorization"] =
+          `Bearer ${dyBaseUrlConfigurator.jwtAccesToken}`;
       }
       return res;
     },
@@ -82,7 +81,7 @@ const axiosRequest = createSlice({
         state.loading = false;
         state.error = false;
       })
-      .addCase(makeRequest.rejected, (state, action: PayloadAction<any>) => {
+      .addCase(makeRequest.rejected, (state) => {
         state.loading = false;
         state.error = true;
       });

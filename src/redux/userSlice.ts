@@ -1,17 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ParsedUserInfo } from "../models/common";
-import DyBaseUrlConfigurator from "../shared/dyBaseUrlConfigurator";
-import { isPropEmpty } from "../shared/utilfunctions";
-
+import { ParsedUserInfo } from "@models/common";
 interface GlobalUserVariables {
   userLoggedIn: boolean;
   parsedUserInfo: ParsedUserInfo | undefined;
 }
 
-const dyBaseConfigurator = new DyBaseUrlConfigurator();
-
 const globalUserVariables: GlobalUserVariables = {
-  userLoggedIn: !isPropEmpty(dyBaseConfigurator.jwtAccesToken),
+  userLoggedIn: false,
   parsedUserInfo: undefined,
 };
 

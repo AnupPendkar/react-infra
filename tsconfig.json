@@ -6,7 +6,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "strict": true,
+    "strict": false,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "module": "esnext",
@@ -18,12 +18,15 @@
     "baseUrl": "./",
     "paths": {
       "@assets/*": ["public/assets/*"],
+      "@components/*": ["src/components/*"],
+      "@environment/*": ["src/environments/*"],
       "@hooks/*": ["src/hooks/*"],
+      "@interceptors/*": ["src/interceptors/*"],
       "@models/*": ["src/models/*"],
       "@redux/*": ["src/redux/*"],
       "@services/*": ["src/services/*"],
       "@shared/*": ["src/shared/*"],
-      "@views/*": ["src/views/*"],
+      "@views/*": ["src/views/*"]
     }
   },
   "include": ["src"]

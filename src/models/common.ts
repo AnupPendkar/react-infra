@@ -18,15 +18,31 @@ export enum AppWebSocketNSPEnum {
   WS_NSP__WAREHOUSE_DBD = "/warehouse-dashboard-live-updates",
 }
 
+export enum LsKeyNameEnum {
+  ACCESS_TOKEN = "react__access_token",
+  REFRESH_TOKEN = "react__refresh_token",
+  ACTIVE_BASE_URL = "react__active_baseUrl",
+  ORIGINAL_BASE_URL = "react__original_baseUrl",
+}
+
+export enum MessageTypeEnum {
+  ERROR = 0,
+  SUCCESS = 1,
+  INFO = 2,
+  WARNING = 3,
+}
+
+export interface Environment {
+  production: boolean;
+  serverAddress: string;
+  serverPort: string;
+  baseUrl: string;
+}
+
 export interface UseSocket {
   isConnected: boolean;
   disconnect: () => void;
   connect: () => void;
-}
-
-export interface axiosState {
-  loading: boolean;
-  error: boolean;
 }
 
 export interface HttpResponse {

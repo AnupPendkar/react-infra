@@ -1,8 +1,10 @@
 import React from "react";
 import useHttp from "@hooks/useHttp";
+import useBasicFunctionality from "@hooks/useSharedEssentials";
 
 const VIew1 = () => {
   const http = useHttp();
+  const basicFunctions = useBasicFunctionality();
 
   const submitDetails = () => {
     http
@@ -10,7 +12,11 @@ const VIew1 = () => {
         warehouse_id: "wh1",
       })
       ?.then((res) => {
-        console.log(res);
+        if (res?.status === 200) {
+          console.log(res);
+          basicFunctions.handleErr(res);
+        } else {
+        }
       });
   };
 

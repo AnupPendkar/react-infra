@@ -1,5 +1,5 @@
+import { userActiveAction, userDetailsAction } from "@redux/actions/userInfoActions";
 import { useAppDispatch } from "@redux/store";
-import { setUserInfo } from "@redux/userSlice";
 import DyBaseUrlConfigurator from "@shared/dyBaseUrlConfigurator";
 
 const useUserMethod = () => {
@@ -7,10 +7,8 @@ const useUserMethod = () => {
   const dybaseConfigurator = new DyBaseUrlConfigurator();
 
   const logout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    dispatch(setUserInfo({ status: false }));
-    window.location.reload();
+    dybaseConfigurator.removeTokensFromLS();
+    dispatch(userActiveAction(false));
   };
 
   const setUserLoginData = (access: string, refresh: string) => {
@@ -18,12 +16,7 @@ const useUserMethod = () => {
     dybaseConfigurator.setRefreshtoken = refresh;
     dybaseConfigurator.setParsedTokenData();
 
-    dispatch(
-      setUserInfo({
-        status: true,
-        info: dybaseConfigurator.parsedUserInfo,
-      })
-    );
+    dispatch(userDetailsAction(dybaseConfigurator.parsedUserInfo));
   };
 
   return { setUserLoginData, logout };

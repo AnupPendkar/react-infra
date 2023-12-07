@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { HttpResponse, ReqMetaData } from "@models/common";
-import { makeRequest } from "@redux/axiosRequestslice";
 import { useAppDispatch } from "@redux/store";
 import useUserMethod from "./useUserMethod";
+import { makeRequest } from "@redux/thunks/axiosRequestThunk";
 
 const useHttp = () => {
   const appDispatch = useAppDispatch();

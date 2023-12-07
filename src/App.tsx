@@ -6,7 +6,7 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
-import BaseUrlConfigurator from "@views/BaseUrlConfigurator";
+import BaseUrlConfigurator from "@views/base-url-config/BaseUrlConfigurator";
 import { useAppSelector } from "@redux/store";
 import VIew1 from "@views/VIew1";
 import Login from "@views/login/Login";
@@ -15,6 +15,8 @@ import { UseSocket } from "@models/common";
 import useUserMethod from "@hooks/useUserMethod";
 import DyBaseUrlConfigurator from "@shared/dyBaseUrlConfigurator";
 import { isPropEmpty } from "@shared/utilfunctions";
+import Button from "@mui/material/Button";
+import Loader from "@components/loader/Loader";
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -24,21 +26,6 @@ function App() {
   const userInfo = useAppSelector((state) => state.user);
   const userMethod = useUserMethod();
   const dybaseConfigurator = new DyBaseUrlConfigurator();
-
-  const Loader = () => (
-    <div
-      className="pos-a flex align-items-center justify-content-center wp-100 hp-100"
-      style={{
-        top: "0",
-        left: "0",
-        background: "rgba(0, 0, 0, 0.6)",
-        zIndex: "100",
-        color: "white",
-      }}
-    >
-      <span style={{ fontSize: "30px" }}>Loading ...</span>
-    </div>
-  );
 
   const onLogoutClick = () => {
     userMethod.logout();
@@ -50,18 +37,19 @@ function App() {
         <p className="fsr-20">
           {socket.isConnected ? "Socket Connected" : "Socket Disconnected"}
         </p>
-        <button onClick={onLogoutClick}>Logout</button>
+        <Button onClick={onLogoutClick} variant="outlined">
+          Logout
+        </Button>
       </div>
     );
   };
 
   useEffect(() => {
-    setLoading(apiInfo?.loading);
+    setLoading(apiInfo.loading);
   }, [apiInfo]);
 
   useEffect(() => {
-    if (userInfo?.userLoggedIn) {
-      console.log("Trying socket connections....");
+    if (userInfo.userLoggedIn) {
       socket.connect();
     }
   }, [userInfo]);

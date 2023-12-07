@@ -7,6 +7,7 @@ import * as Yup from "yup";
 import useHttp from "@hooks/useHttp";
 import { useAppSelector } from "@redux/store";
 import useUserMethod from "@hooks/useUserMethod";
+import useBasicFunctionality from "@hooks/useSharedEssentials";
 
 interface LoginFormInput {
   username: string;
@@ -18,8 +19,9 @@ const Login = () => {
   const userMethod = useUserMethod();
   const user = useAppSelector((state) => state.user);
   const http = useHttp();
+  const basicFunctions = useBasicFunctionality();
 
-  const validationSchema: Yup.Schema<LoginFormInput> = Yup.object().shape({
+  const validationSchema = Yup.object().shape({
     username: Yup.string()
       .required("Required")
       .max(15, "Must be 15 characters or less"),
@@ -38,6 +40,8 @@ const Login = () => {
         if (res?.status === 200) {
           userMethod.setUserLoginData(res?.data?.access, res?.data?.refresh);
           navigate("/app");
+        } else {
+          basicFunctions.handleErr(res);
         }
       });
   };

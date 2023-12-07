@@ -1,11 +1,9 @@
-// @import './assets/scss/variables';
-@import '../public/assets/scss/variables';
-@import '../public/assets/scss/flex-grid';
-@import '../public/assets/scss/loaders';
-// @import '../public/assets/scss/reset';
-@import '../public/assets/scss/various';
-@import '../public/assets/scss/single-property';
-@import '../public/assets/scss/font-face';
+@import "../public/assets/scss/variables";
+@import "../public/assets/scss/flex-grid";
+@import "../public/assets/scss/loaders";
+@import "../public/assets/scss/various";
+@import "../public/assets/scss/single-property";
+@import "../public/assets/scss/font-face";
 
 body {
   box-sizing: border-box;

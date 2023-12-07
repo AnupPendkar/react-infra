@@ -1,9 +1,10 @@
-import { IJWTPayload, ParsedUserInfo } from "@models/common";
+import { IJWTPayload, LsKeyNameEnum, ParsedUserInfo } from "@models/common";
 import { isPropEmpty, strCmp } from "./utilfunctions";
+import { environment } from "@environment/environment";
 
 export default class DyBaseUrlConfigurator {
-  baseUrl = process.env.REACT_APP_API_URL;
-  private __baseurlInstance = new URL(this.baseUrl as string);
+  baseUrl: string;
+  private __baseurlInstance: URL;
   parsedUserInfo!: ParsedUserInfo;
 
   get serverAddress(): string {
@@ -14,35 +15,35 @@ export default class DyBaseUrlConfigurator {
   }
 
   get activeBaseUrl(): string | null {
-    return localStorage.getItem("react__active_baseUrl");
-  }
-
-  set setAccesstoken(token: string) {
-    localStorage.setItem("react__access_token", token);
-  }
-
-  set setRefreshtoken(token: string) {
-    localStorage.setItem("react__refresh_token", token);
-  }
-
-  get jwtAccesToken(): string | null {
-    return localStorage.getItem("react__access_token");
-  }
-
-  get jwtRefreshToken(): string | null {
-    return localStorage.getItem("react__refresh_token");
-  }
-
-  get originalBaseUrl(): string | null {
-    return localStorage.getItem("react__original_baseUrl");
+    return localStorage.getItem(LsKeyNameEnum.ACTIVE_BASE_URL);
   }
 
   set setActiveBaseUrl(url: string) {
-    localStorage.setItem("react__active_baseUrl", url);
+    localStorage.setItem(LsKeyNameEnum.ACTIVE_BASE_URL, url);
+  }
+
+  get originalBaseUrl(): string | null {
+    return localStorage.getItem(LsKeyNameEnum.ORIGINAL_BASE_URL);
   }
 
   set setOriginalBaseUrl(url: string) {
-    localStorage.setItem("react__original_baseUrl", url);
+    localStorage.setItem(LsKeyNameEnum.ORIGINAL_BASE_URL, url);
+  }
+
+  set setAccesstoken(token: string) {
+    localStorage.setItem(LsKeyNameEnum.ACCESS_TOKEN, token);
+  }
+
+  get jwtAccesToken(): string | null {
+    return localStorage.getItem(LsKeyNameEnum.ACCESS_TOKEN);
+  }
+
+  set setRefreshtoken(token: string) {
+    localStorage.setItem(LsKeyNameEnum.REFRESH_TOKEN, token);
+  }
+
+  get jwtRefreshToken(): string | null {
+    return localStorage.getItem(LsKeyNameEnum.REFRESH_TOKEN);
   }
 
   setParsedTokenData() {
@@ -75,6 +76,12 @@ export default class DyBaseUrlConfigurator {
     return JSON.parse(jsonPayload);
   }
 
+  removeTokensFromLS(): void {
+    localStorage.removeItem(LsKeyNameEnum.ACCESS_TOKEN);
+    localStorage.removeItem(LsKeyNameEnum.REFRESH_TOKEN);
+    window.location.reload();
+  }
+
   setActiveBaseIfNotPresent() {
     if (isPropEmpty(this.activeBaseUrl)) {
       this.setActiveBaseUrl = this.originalBaseUrl as string;
@@ -82,7 +89,7 @@ export default class DyBaseUrlConfigurator {
   }
 
   initBaseURLConfigurator(apiUrl?: string) {
-    this.baseUrl = apiUrl ?? process.env.REACT_APP_API_URL;
+    this.baseUrl = apiUrl ?? environment?.baseUrl;
     this.setOriginalBaseUrl = this.baseUrl as string;
     this.setActiveBaseIfNotPresent();
 

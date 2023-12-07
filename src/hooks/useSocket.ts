@@ -7,6 +7,7 @@ import {
 } from "@models/common";
 import { useAppSelector } from "@redux/store";
 import DyBaseUrlConfigurator from "@shared/dyBaseUrlConfigurator";
+import { environment } from "@environment/environment";
 
 interface ISocketClient {
   namespace: AppWebSocketNSPEnum;
@@ -17,10 +18,11 @@ const useSocket = (): UseSocket => {
   const dyBaseConfigurator = new DyBaseUrlConfigurator();
   const baseUrl =
     new URL(dyBaseConfigurator.activeBaseUrl as string) ??
-    new URL(process.env.REACT_APP_API_URL as string);
+    new URL(environment.baseUrl as string);
+
   const userInfo = useAppSelector((state) => state?.user);
-  const socketUrl = `${baseUrl.href}/warehouse-dashboard-live-updates`;
   const socketNamespace = AppWebSocketNSPEnum.WS_NSP__WAREHOUSE_DBD;
+  const socketUrl = `${baseUrl.href}${socketNamespace}`;
   const websocketEvents = [
     WSEventNameEnum.CARGO_PACKAGE_COUNT_LIVE_UPDATE_EVT,
     WSEventNameEnum.RACK_BASED_BIN_UPDATE,

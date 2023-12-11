@@ -1,51 +1,9 @@
 import { IJWTPayload, LsKeyNameEnum, ParsedUserInfo } from "@models/common";
 import { isPropEmpty, strCmp } from "./utilfunctions";
 import { environment } from "@environment/environment";
+import StorageHandler from "./storageHandler";
 
-export default class DyBaseUrlConfigurator {
-  baseUrl: string;
-  private __baseurlInstance: URL;
-  parsedUserInfo!: ParsedUserInfo;
-
-  get serverAddress(): string {
-    return this.__baseurlInstance?.hostname;
-  }
-  get serverPort(): string {
-    return this.__baseurlInstance?.port;
-  }
-
-  get activeBaseUrl(): string | null {
-    return localStorage.getItem(LsKeyNameEnum.ACTIVE_BASE_URL);
-  }
-
-  set setActiveBaseUrl(url: string) {
-    localStorage.setItem(LsKeyNameEnum.ACTIVE_BASE_URL, url);
-  }
-
-  get originalBaseUrl(): string | null {
-    return localStorage.getItem(LsKeyNameEnum.ORIGINAL_BASE_URL);
-  }
-
-  set setOriginalBaseUrl(url: string) {
-    localStorage.setItem(LsKeyNameEnum.ORIGINAL_BASE_URL, url);
-  }
-
-  set setAccesstoken(token: string) {
-    localStorage.setItem(LsKeyNameEnum.ACCESS_TOKEN, token);
-  }
-
-  get jwtAccesToken(): string | null {
-    return localStorage.getItem(LsKeyNameEnum.ACCESS_TOKEN);
-  }
-
-  set setRefreshtoken(token: string) {
-    localStorage.setItem(LsKeyNameEnum.REFRESH_TOKEN, token);
-  }
-
-  get jwtRefreshToken(): string | null {
-    return localStorage.getItem(LsKeyNameEnum.REFRESH_TOKEN);
-  }
-
+export default class UrlConfigManager extends StorageHandler {
   setParsedTokenData() {
     const parsedTokenData = this.parseJwt(this.jwtAccesToken as string);
     this.parsedUserInfo = {

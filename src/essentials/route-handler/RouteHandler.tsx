@@ -6,35 +6,30 @@ import React from "react";
 import {
   HashRouter,
   Navigate,
+  Outlet,
   Route,
   Routes,
 } from "react-router-dom";
 
 const RouteHandler = () => {
-  const userVar = useAppSelector((state) => state?.user);
-  const userInfo = useAppSelector((state) => state.user);
+
+  const AuthGuard = () => {
+    return userLoggedIn ? <Outlet /> : <Navigate to="/login" />
+  };
+
+  const { userLoggedIn } = useAppSelector((state) => state.user);
 
   return (
     <HashRouter>
       <Routes>
-        <Route
-          path="/"
-          element={
-            !userVar.userLoggedIn ? (
-              <Navigate to="/login" />
-            ) : (
-              <Navigate to="/app" />
-            )
-          }
-        />
-        <Route path="/login" Component={Login} />
-        <Route
-          path="/app"
-          element={
-            userInfo?.userLoggedIn ? <VIew1 /> : <Navigate to="/login" />
-          }
-        />
-        <Route path="/config" Component={BaseUrlConfigurator} />
+        <Route path="/login" element={< Login />} />
+        <Route path="/config" element={<BaseUrlConfigurator />} />
+
+        <Route element={<AuthGuard />} >
+          <Route path="/" element={!userLoggedIn ? (<Navigate to="/login" />) : (<Navigate to="/app" />)} />
+          <Route path="/app" element={<VIew1 />} />
+        </Route>
+
       </Routes>
     </HashRouter>
   );

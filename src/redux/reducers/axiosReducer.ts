@@ -15,6 +15,7 @@ function initAxiosInterceptors() {
 function createAxiosInsFromBaseUrl(baseUrl: string) {
   axiosInstance = axios.create({
     baseURL: baseUrl,
+    timeout: 10000
   });
 
   initAxiosInterceptors();

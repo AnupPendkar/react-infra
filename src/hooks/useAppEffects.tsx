@@ -1,16 +1,15 @@
 import { isPropEmpty } from "@shared/utilfunctions";
-import React, { useEffect } from "react";
-import useUserMethod from "./useUserMethod";
-import DyBaseUrlConfigurator from "@shared/dyBaseUrlConfigurator";
+import React, { useEffect, useState } from "react";
+import useAuthMethods from "./useAuthMethods";
 import { useAppSelector } from "@redux/store";
 import useSocket from "./useSocket";
 import { UseSocket } from "@models/common";
+import StorageHandler from "@shared/storageHandler";
 
-const useAppUseEffectWrapper = (
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>
-) => {
-  const userMethod = useUserMethod();
-  const dybaseConfigurator = new DyBaseUrlConfigurator();
+const useAppEffects = () => {
+  const {setUserLoginData} = useAuthMethods();
+  const [loading, setLoading] = useState(false);
+  const storageHandler = new StorageHandler();
   const apiInfo = useAppSelector((state) => state?.http);
   const userInfo = useAppSelector((state) => state.user);
   const socket: UseSocket = useSocket();
@@ -21,24 +20,26 @@ const useAppUseEffectWrapper = (
   }, [apiInfo]);
 
   useEffect(() => {
-    console.log("userInfo");
     if (userInfo.userLoggedIn) {
+      console.log("userInfo");
       socket.connect();
     }
   }, [userInfo]);
   
   useEffect(() => {
     console.log("jklsdf");
-    const accessToken = dybaseConfigurator.jwtAccesToken;
-    const refreshToken = dybaseConfigurator.jwtRefreshToken;
+    const accessToken = storageHandler.jwtAccesToken;
+    const refreshToken = storageHandler.jwtRefreshToken;
 
     if (!isPropEmpty(accessToken) && !isPropEmpty(refreshToken)) {
-      userMethod.setUserLoginData(
+      setUserLoginData(
         accessToken as string,
         refreshToken as string
       );
     }
   }, []);
+
+  return {loading}
 };
 
-export default useAppUseEffectWrapper;
+export default useAppEffects;

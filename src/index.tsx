@@ -5,15 +5,15 @@ import App from "./App";
 import axios from "axios";
 import { Provider } from "react-redux";
 import { store } from "@redux/store";
-import DyBaseUrlConfigurator from "@shared/dyBaseUrlConfigurator";
+import UrlConfigManager from "@shared/urlConfigManager";
 import { createAxiosInsFromBaseUrl } from "@redux/reducers/axiosReducer";
 
-const dyBaseUrlConfigurator = new DyBaseUrlConfigurator();
+const urlConfigManager = new UrlConfigManager();
 const resolveConfigJsonFile = (): Promise<void> => {
   return new Promise((resolve) => {
     axios.get("assets/config.json").then((res) => {
-      dyBaseUrlConfigurator.initBaseURLConfigurator(res?.data?.baseUrl);
-      createAxiosInsFromBaseUrl(dyBaseUrlConfigurator.baseUrl as string);
+      urlConfigManager.initBaseURLConfigurator(res?.data?.baseUrl);
+      createAxiosInsFromBaseUrl(urlConfigManager.baseUrl as string);
       resolve();
     });
   });

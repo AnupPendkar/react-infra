@@ -1,26 +1,21 @@
 import "./App.scss";
 import React, { useEffect, useState } from "react";
 import { useAppSelector } from "@redux/store";
-import useSocket from "@hooks/useSocket";
 import { MessageTypeEnum, UseSocket } from "@models/common";
-import useUserMethod from "@hooks/useUserMethod";
-import DyBaseUrlConfigurator from "@shared/dyBaseUrlConfigurator";
-import { isPropEmpty } from "@shared/utilfunctions";
+import useAuthMethods from "@hooks/useAuthMethods";
 import Button from "@mui/material/Button";
 import Loader from "@components/loader/Loader";
 import MessageBox from "@components/message-box/MessageBox";
 import RouteHandler from "./essentials/route-handler/RouteHandler";
-import useAppUseEffectWrapper from "@hooks/useAppUseEffectWrapper";
+import useAppEffects from "@hooks/useAppEffects";
 
 function App() {
-  const [loading, setLoading] = useState(false);
-  const userInfo = useAppSelector((state) => state.user);
-  const userMethod = useUserMethod();
-
-  const useEffectWrapper = useAppUseEffectWrapper(setLoading);
+  const {userLoggedIn} = useAppSelector((state) => state.user);
+  const {logout} = useAuthMethods();
+  const {loading} = useAppEffects();
 
   const onLogoutClick = () => {
-    userMethod.logout();
+    logout();
   };
 
   const getSocketStatusAndShowLogout = () => {
@@ -37,7 +32,7 @@ function App() {
 
   return (
     <div className="App">
-      {userInfo?.userLoggedIn && getSocketStatusAndShowLogout()}
+      {userLoggedIn && getSocketStatusAndShowLogout()}
       {loading && <Loader />} {/* Loader */}
       <RouteHandler />
       <MessageBox

@@ -1,15 +1,16 @@
 import { axiosInstance } from "@redux/reducers/axiosReducer";
-import DyBaseUrlConfigurator from "@shared/dyBaseUrlConfigurator";
+import StorageHandler from "@shared/storageHandler";
+import UrlConfigManager from "@shared/urlConfigManager";
 import { isPropEmpty } from "@shared/utilfunctions";
 
-const dyBaseUrlConfigurator = new DyBaseUrlConfigurator();
+const storageHandler = new StorageHandler();
 
 export const initRequestInterceptor = () => {
   axiosInstance.interceptors.request.use(
     (res) => {
-      if (!isPropEmpty(dyBaseUrlConfigurator.jwtAccesToken)) {
+      if (!isPropEmpty(storageHandler.jwtAccesToken)) {
         res.headers["Authorization"] =
-          `Bearer ${dyBaseUrlConfigurator.jwtAccesToken}`;
+          `Bearer ${storageHandler.jwtAccesToken}`;
       }
       return res;
     },

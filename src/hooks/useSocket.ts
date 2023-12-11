@@ -1,4 +1,3 @@
-import { useState } from "react";
 import * as socketIo from "socket.io-client";
 import {
   AppWebSocketNSPEnum,
@@ -6,9 +5,9 @@ import {
   WSEventNameEnum,
 } from "@models/common";
 import { useAppDispatch, useAppSelector } from "@redux/store";
-import DyBaseUrlConfigurator from "@shared/dyBaseUrlConfigurator";
 import { environment } from "@environment/environment";
 import { userSocketConnection } from "@redux/actions/userInfoActions";
+import StorageHandler from "@shared/storageHandler";
 
 interface ISocketClient {
   namespace: AppWebSocketNSPEnum;
@@ -16,13 +15,13 @@ interface ISocketClient {
 }
 
 const useSocket = (): UseSocket => {
-  const dyBaseConfigurator = new DyBaseUrlConfigurator();
+  const storageHandler = new StorageHandler();
   const baseUrl =
-    new URL(dyBaseConfigurator.activeBaseUrl as string) ??
+    new URL(storageHandler.activeBaseUrl as string) ??
     new URL(environment.baseUrl as string);
 
-  const userInfo = useAppSelector((state) => state?.user);
   const dispatch = useAppDispatch();
+  const {parsedUserInfo} = useAppSelector((state) => state?.user);
   const socketNamespace = AppWebSocketNSPEnum.WS_NSP__WAREHOUSE_DBD;
   const socketUrl = `${baseUrl.href}${socketNamespace}`;
   const websocketEvents = [
@@ -33,8 +32,6 @@ const useSocket = (): UseSocket => {
   ];
 
   const socketioClients: Array<ISocketClient> = [];
-
-  // const [isConnected, setIsConnected] = useState<boolean>(false);
 
   function onConnectionError() {
     console.log("connection error");
@@ -47,7 +44,6 @@ const useSocket = (): UseSocket => {
   function disconnectSocketConnections() {
     console.log("disconnect");
     dispatch(userSocketConnection(true));
-    // setIsConnected(false);
     socketioClients?.forEach((socket) => {
       socket?.socket?.disconnect();
     });
@@ -64,7 +60,6 @@ const useSocket = (): UseSocket => {
     socket.on(WSEventNameEnum.CONNECTION_FAILED, onConnectionFailed);
     socket.on(WSEventNameEnum.DISCONNECT, disconnectSocketConnections);
     socket.on(WSEventNameEnum.CONNECT, () => {
-      // setIsConnected(true);
       dispatch(userSocketConnection(true));
 
       websocketEvents.forEach((event) => {
@@ -77,8 +72,8 @@ const useSocket = (): UseSocket => {
       socket.emit(
         "join",
         {
-          username: userInfo.parsedUserInfo?.username,
-          token: userInfo.parsedUserInfo?.token,
+          username: parsedUserInfo?.username,
+          token: parsedUserInfo?.token,
         },
         (response: any) => {
           // 401 is agreed by server to be an authentication failure signal.

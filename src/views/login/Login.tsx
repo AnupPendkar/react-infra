@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import useHttp from "@hooks/useHttp";
 import { useAppSelector } from "@redux/store";
-import useUserMethod from "@hooks/useUserMethod";
+import useAuthMethods from "@hooks/useAuthMethods";
 import useBasicFunctionality from "@hooks/useSharedEssentials";
 
 interface LoginFormInput {
@@ -16,7 +16,7 @@ interface LoginFormInput {
 
 const Login = () => {
   const navigate = useNavigate();
-  const userMethod = useUserMethod();
+  const {setUserLoginData} = useAuthMethods();
   const user = useAppSelector((state) => state.user);
   const http = useHttp();
   const basicFunctions = useBasicFunctionality();
@@ -38,7 +38,7 @@ const Login = () => {
       })
       .then((res) => {
         if (res?.status === 200) {
-          userMethod.setUserLoginData(res?.data?.access, res?.data?.refresh);
+          setUserLoginData(res?.data?.access, res?.data?.refresh);
           navigate("/app");
         } else {
           basicFunctions.handleErr(res);

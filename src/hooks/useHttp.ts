@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { HttpResponse, ReqMetaData } from "@models/common";
 import { useAppDispatch } from "@redux/store";
-import useUserMethod from "./useUserMethod";
+import useAuthMethods from "./useAuthMethods";
 import { makeRequest } from "@redux/thunks/axiosRequestThunk";
 
 const useHttp = () => {
   const appDispatch = useAppDispatch();
-  const userMethod = useUserMethod();
+  const {logout} = useAuthMethods();
   const navigate = useNavigate();
 
   const request = (
@@ -25,7 +25,7 @@ const useHttp = () => {
 
       appDispatch(makeRequest(requestPayload)).then((res) => {
         if ((res?.payload as HttpResponse)?.status === 401) {
-          userMethod.logout();
+          logout();
           navigate("/");
           return;
         }

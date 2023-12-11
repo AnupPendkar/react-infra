@@ -1,19 +1,15 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import useUserMethod from "@hooks/useUserMethod";
-import DyBaseUrlConfigurator from "@shared/dyBaseUrlConfigurator";
+import useAuthMethods from "@hooks/useAuthMethods";
+import UrlConfigManager from "@shared/urlConfigManager";
 
 const BaseUrlConfigurator = () => {
   const navigate = useNavigate();
-  const userMethod = useUserMethod();
-  const dyBaseUrlConfigurator = new DyBaseUrlConfigurator();
-
-  const logout = () => {
-    userMethod.logout();
-  };
+  const {logout} = useAuthMethods();
+  const urlConfigManager = new UrlConfigManager();
 
   useEffect(() => {
-    dyBaseUrlConfigurator.invokePrompt().then((res) => {
+    urlConfigManager.invokePrompt().then((res) => {
       if (res) {
         logout();
         navigate("/");

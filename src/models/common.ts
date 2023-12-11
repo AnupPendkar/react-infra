@@ -40,7 +40,6 @@ export interface Environment {
 }
 
 export interface UseSocket {
-  isConnected: boolean;
   disconnect: () => void;
   connect: () => void;
 }

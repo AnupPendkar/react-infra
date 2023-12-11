@@ -5,9 +5,10 @@ import {
   UseSocket,
   WSEventNameEnum,
 } from "@models/common";
-import { useAppSelector } from "@redux/store";
+import { useAppDispatch, useAppSelector } from "@redux/store";
 import DyBaseUrlConfigurator from "@shared/dyBaseUrlConfigurator";
 import { environment } from "@environment/environment";
+import { userSocketConnection } from "@redux/actions/userInfoActions";
 
 interface ISocketClient {
   namespace: AppWebSocketNSPEnum;
@@ -21,6 +22,7 @@ const useSocket = (): UseSocket => {
     new URL(environment.baseUrl as string);
 
   const userInfo = useAppSelector((state) => state?.user);
+  const dispatch = useAppDispatch();
   const socketNamespace = AppWebSocketNSPEnum.WS_NSP__WAREHOUSE_DBD;
   const socketUrl = `${baseUrl.href}${socketNamespace}`;
   const websocketEvents = [
@@ -32,7 +34,7 @@ const useSocket = (): UseSocket => {
 
   const socketioClients: Array<ISocketClient> = [];
 
-  const [isConnected, setIsConnected] = useState<boolean>(false);
+  // const [isConnected, setIsConnected] = useState<boolean>(false);
 
   function onConnectionError() {
     console.log("connection error");
@@ -44,7 +46,8 @@ const useSocket = (): UseSocket => {
 
   function disconnectSocketConnections() {
     console.log("disconnect");
-    setIsConnected(false);
+    dispatch(userSocketConnection(true));
+    // setIsConnected(false);
     socketioClients?.forEach((socket) => {
       socket?.socket?.disconnect();
     });
@@ -61,7 +64,9 @@ const useSocket = (): UseSocket => {
     socket.on(WSEventNameEnum.CONNECTION_FAILED, onConnectionFailed);
     socket.on(WSEventNameEnum.DISCONNECT, disconnectSocketConnections);
     socket.on(WSEventNameEnum.CONNECT, () => {
-      setIsConnected(true);
+      // setIsConnected(true);
+      dispatch(userSocketConnection(true));
+
       websocketEvents.forEach((event) => {
         socket.on(event, (response: any) => {
           console.log(event, response);
@@ -96,7 +101,6 @@ const useSocket = (): UseSocket => {
   };
 
   return {
-    isConnected,
     connect: initSocketConnection,
     disconnect: disconnectSocketConnections,
   };

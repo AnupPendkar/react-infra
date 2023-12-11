@@ -21,12 +21,13 @@
     {
       "files": ["*.tsx", "*.ts", "*.js", "*.jsx"],
       "rules": {
-        "no-unused-vars": "warn",
+        "no-unused-vars": "off",
         "quotes": "off",
-        "no-debugger": "error",
+        // "no-debugger": "error",
         "explicit-module-boundary-types": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/no-unused-vars": ["off"],
         "max-len": [
           "error",
           {

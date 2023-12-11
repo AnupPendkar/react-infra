@@ -50,7 +50,6 @@ const MessageBox = (props: MessageBoxProps) => {
   };
 
   useEffect(() => {
-    console.log("message called");
     setMessageType(props.messageType);
     setDialogMessage(props.dialogMessage);
     setDialogHeading(props.dialogHeading);

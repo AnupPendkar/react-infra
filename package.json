@@ -31,7 +31,7 @@
     "yup": "^1.3.2"
   },
   "scripts": {
-    "start": "PORT=4600 BROWSER=none craco start",
+    "start": "BROWSER=none craco start",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject"

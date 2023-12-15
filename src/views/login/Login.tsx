@@ -8,6 +8,7 @@ import useHttp from "@hooks/useHttp";
 import { useAppSelector } from "@redux/store";
 import useAuthMethods from "@hooks/useAuthMethods";
 import useBasicFunctionality from "@hooks/useSharedEssentials";
+import { Button } from "@mui/material";
 
 interface LoginFormInput {
   username: string;
@@ -16,7 +17,7 @@ interface LoginFormInput {
 
 const Login = () => {
   const navigate = useNavigate();
-  const {setUserLoginData} = useAuthMethods();
+  const { setUserLoginData } = useAuthMethods();
   const user = useAppSelector((state) => state.user);
   const http = useHttp();
   const basicFunctions = useBasicFunctionality();
@@ -39,7 +40,7 @@ const Login = () => {
       .then((res) => {
         if (res?.status === 200) {
           setUserLoginData(res?.data?.access, res?.data?.refresh);
-          navigate("/app");
+          navigate("/data-capture");
         } else {
           basicFunctions.handleErr(res);
         }
@@ -59,7 +60,7 @@ const Login = () => {
 
   useEffect(() => {
     if (user.userLoggedIn) {
-      navigate("/app");
+      navigate("/data-capture");
     }
   }, []);
 

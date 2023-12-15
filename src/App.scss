@@ -1,4 +1,31 @@
 .App {
   width: 100vw;
   height: 100vh;
+  display: grid;
+  grid-template:
+    [header] "head head" max-content [header-right]
+    [main-left] "nav main" 1fr [main-right]
+    [footer-left] "nav  foot" max-content [footer-right]
+    / max-content 1fr;
+}
+
+.app-header {
+  grid-area: head;
+}
+
+.app-sidebar {
+  grid-area: nav;
+}
+
+.app-main {
+  grid-area: main;
+}
+
+.app-footer {
+  grid-area: foot;
+}
+
+// ----------------------------------------------------------
+.MuiOutlinedInput-notchedOutline {
+  border-color: white !important;
 }

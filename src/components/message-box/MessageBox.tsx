@@ -6,24 +6,21 @@ import {
   DialogContentText,
   DialogActions,
   Button,
+  Box,
+  IconButton,
+  Divider,
 } from "@mui/material";
 import ReportGmailerrorredIcon from "@mui/icons-material/ReportGmailerrorred";
 import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
 import DangerousOutlinedIcon from "@mui/icons-material/DangerousOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { MessageTypeEnum } from "@models/common";
+import { MessageBoxProps, MessageIconTypeEnum } from "@models/common";
 import "./messageBox.scss";
 
-interface MessageBoxProps {
-  dialogHeading: string;
-  dialogMessage: string;
-  messageType: MessageTypeEnum;
-}
-
-const MessageBox = (props: MessageBoxProps) => {
-  const [messageType, setMessageType] = useState<MessageTypeEnum>();
-  const [dialogHeading, setDialogHeading] = useState<string>();
-  const [dialogMessage, setDialogMessage] = useState<string>();
+const MessageBox = ({ dialogDetails }: { dialogDetails: MessageBoxProps }) => {
+  // const [messageType, setMessageType] = useState<MessageIconTypeEnum>();
+  // const [dialogHeading, setDialogHeading] = useState<string>();
+  // const [dialogMessage, setDialogMessage] = useState<string>();
   const [open, setOpen] = useState<boolean>(true);
 
   const handleClose = () => {
@@ -31,17 +28,17 @@ const MessageBox = (props: MessageBoxProps) => {
   };
 
   const MessageIcon = () => {
-    switch (messageType) {
-      case MessageTypeEnum.SUCCESS:
+    switch (dialogDetails?.iconType) {
+      case MessageIconTypeEnum.SUCCESS:
         return <CheckCircleOutlinedIcon />;
 
-      case MessageTypeEnum.INFO:
+      case MessageIconTypeEnum.INFO:
         return <InfoOutlinedIcon />;
 
-      case MessageTypeEnum.ERROR:
+      case MessageIconTypeEnum.ERROR:
         return <DangerousOutlinedIcon />;
 
-      case MessageTypeEnum.WARNING:
+      case MessageIconTypeEnum.WARNING:
         return <ReportGmailerrorredIcon />;
 
       default:
@@ -50,22 +47,30 @@ const MessageBox = (props: MessageBoxProps) => {
   };
 
   useEffect(() => {
-    setMessageType(props.messageType);
-    setDialogMessage(props.dialogMessage);
-    setDialogHeading(props.dialogHeading);
+    // setMessageType(props.messageType);
+    // setDialogMessage(props.dialogMessage);
+    // setDialogHeading(props.dialogHeading);
   }, []);
 
   return (
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle className="flex align-items-center">
-        <MessageIcon />
-        <span className="fsr-22 font-isb ml-10">{dialogHeading}</span>
+        <IconButton className="pl-0" color="error">
+          <MessageIcon />
+        </IconButton>
+        <span className="fsr-22 font-isb">{dialogDetails?.title}</span>
       </DialogTitle>
       <DialogContent>
-        <DialogContentText>{dialogMessage}</DialogContentText>
+        <DialogContentText>{dialogDetails?.content}</DialogContentText>
         <DialogActions>
-          <Button onClick={handleClose} variant="contained">
-            Ok
+          {dialogDetails?.closeMsg && (
+            <Button color="success" onClick={handleClose} variant="contained">
+              {dialogDetails?.closeMsg}
+            </Button>
+          )}
+
+          <Button color="success" onClick={handleClose} variant="contained">
+            {dialogDetails?.confirmMsg}
           </Button>
         </DialogActions>
       </DialogContent>

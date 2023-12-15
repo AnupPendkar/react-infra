@@ -1,6 +1,7 @@
 import * as socketIo from "socket.io-client";
 import {
   AppWebSocketNSPEnum,
+  ISocketClient,
   UseSocket,
   WSEventNameEnum,
 } from "@models/common";
@@ -8,11 +9,8 @@ import { useAppDispatch, useAppSelector } from "@redux/store";
 import { environment } from "@environment/environment";
 import { userSocketConnection } from "@redux/actions/userInfoActions";
 import StorageHandler from "@shared/storageHandler";
-
-interface ISocketClient {
-  namespace: AppWebSocketNSPEnum;
-  socket: socketIo.Socket;
-}
+import { isPropEmpty } from "@shared/utilfunctions";
+import { useRef, useState } from "react";
 
 const useSocket = (): UseSocket => {
   const storageHandler = new StorageHandler();
@@ -21,9 +19,8 @@ const useSocket = (): UseSocket => {
     new URL(environment.baseUrl as string);
 
   const dispatch = useAppDispatch();
-  const {parsedUserInfo} = useAppSelector((state) => state?.user);
+  const { parsedUserInfo } = useAppSelector((state) => state?.user);
   const socketNamespace = AppWebSocketNSPEnum.WS_NSP__WAREHOUSE_DBD;
-  const socketUrl = `${baseUrl.href}${socketNamespace}`;
   const websocketEvents = [
     WSEventNameEnum.CARGO_PACKAGE_COUNT_LIVE_UPDATE_EVT,
     WSEventNameEnum.RACK_BASED_BIN_UPDATE,
@@ -31,20 +28,36 @@ const useSocket = (): UseSocket => {
     WSEventNameEnum.JOB_STOP,
   ];
 
-  const socketioClients: Array<ISocketClient> = [];
+  const socketUrl = `${baseUrl.href}${socketNamespace}`;
+  const socketioClients = useRef<Array<ISocketClient>>([]);
+  // const socketioClients: Array<ISocketClient> = [];
+
+  function isAllSocketsConnected() {
+    console.log(socketioClients?.current?.length);
+    return (
+      !isPropEmpty(socketioClients?.current) &&
+      socketioClients?.current.filter(
+        (socket) => socket?.socket?.connected === false
+      )?.length <= 0
+      // socketioClients?.length ===
+      //   requiredWebsocketDBDSolutions?.length
+    );
+  }
 
   function onConnectionError() {
+    dispatch(userSocketConnection(false));
     console.log("connection error");
   }
 
   function onConnectionFailed() {
+    dispatch(userSocketConnection(false));
     console.log("connection failed");
   }
 
   function disconnectSocketConnections() {
     console.log("disconnect");
-    dispatch(userSocketConnection(true));
-    socketioClients?.forEach((socket) => {
+    dispatch(userSocketConnection(false));
+    socketioClients?.current?.forEach((socket) => {
       socket?.socket?.disconnect();
     });
   }
@@ -60,8 +73,6 @@ const useSocket = (): UseSocket => {
     socket.on(WSEventNameEnum.CONNECTION_FAILED, onConnectionFailed);
     socket.on(WSEventNameEnum.DISCONNECT, disconnectSocketConnections);
     socket.on(WSEventNameEnum.CONNECT, () => {
-      dispatch(userSocketConnection(true));
-
       websocketEvents.forEach((event) => {
         socket.on(event, (response: any) => {
           console.log(event, response);
@@ -86,9 +97,17 @@ const useSocket = (): UseSocket => {
         }
       );
 
-      socketioClients.push({ namespace: socketNamespace, socket: socket });
+      socketioClients?.current.push({
+        namespace: socketNamespace,
+        socket: socket,
+      });
+
+      if (isAllSocketsConnected()) {
+        console.log("casdf");
+        dispatch(userSocketConnection(true));
+      }
       console.log({
-        "Connected socket namespaces": socketioClients?.map(
+        "Connected socket namespaces": socketioClients?.current?.map(
           (nsp) => `${baseUrl}${nsp?.namespace}`
         ),
       });

@@ -4,9 +4,10 @@ import "./index.scss";
 import App from "./App";
 import axios from "axios";
 import { Provider } from "react-redux";
-import { store } from "@redux/store";
+import { store, useAppSelector } from "@redux/store";
 import UrlConfigManager from "@shared/urlConfigManager";
 import { createAxiosInsFromBaseUrl } from "@redux/reducers/axiosReducer";
+import CustomThemeProvider from "./theming/CustomThemeProvider";
 
 const urlConfigManager = new UrlConfigManager();
 const resolveConfigJsonFile = (): Promise<void> => {
@@ -21,12 +22,14 @@ const resolveConfigJsonFile = (): Promise<void> => {
 
 resolveConfigJsonFile()?.then(() => {
   const root = ReactDOM.createRoot(
-    document.getElementById("root") as HTMLElement
+    document.getElementById("root") as HTMLElement,
   );
 
   root.render(
     <Provider store={store}>
-      <App />
+      <CustomThemeProvider>
+        <App />
+      </CustomThemeProvider>
     </Provider>
   );
 });

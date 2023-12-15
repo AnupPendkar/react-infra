@@ -1,3 +1,6 @@
+import { Theme } from "@mui/material";
+import * as socketIo from "socket.io-client";
+
 export enum WSEventNameEnum {
   // Meta events.
   CONNECT = "connect",
@@ -23,13 +26,19 @@ export enum LsKeyNameEnum {
   REFRESH_TOKEN = "react__refresh_token",
   ACTIVE_BASE_URL = "react__active_baseUrl",
   ORIGINAL_BASE_URL = "react__original_baseUrl",
+  THEME = "react__theme_preference",
 }
 
-export enum MessageTypeEnum {
+export enum MessageIconTypeEnum {
   ERROR = 0,
   SUCCESS = 1,
   INFO = 2,
   WARNING = 3,
+}
+
+export enum PopupActionEnum {
+  CANCEL = 1,
+  SUBMIT = 2,
 }
 
 export interface Environment {
@@ -37,6 +46,11 @@ export interface Environment {
   serverAddress: string;
   serverPort: string;
   baseUrl: string;
+}
+
+export interface ISocketClient {
+  namespace: AppWebSocketNSPEnum;
+  socket: socketIo.Socket;
 }
 
 export interface UseSocket {
@@ -59,6 +73,19 @@ export interface ReqMetaData {
   loaderSubText?: string;
   headers?: object;
   options?: any;
+}
+
+export enum MessageBoxTypeEnum {
+  MESSAGE_BOX = 1,
+}
+
+export interface MessageBoxProps {
+  type: MessageBoxTypeEnum;
+  title: string;
+  content: string;
+  iconType?: MessageIconTypeEnum;
+  confirmMsg?: string;
+  closeMsg?: string;
 }
 
 export interface ParsedUserInfo {
@@ -88,4 +115,17 @@ export interface IJWTPayload {
       permissions: Array<number>;
     }>;
   };
+}
+
+export enum ThemePrefEnum {
+  DARK = 0,
+  LIGHT = 1,
+}
+
+export interface ThemeDetails {
+  direction: string;
+  mode?: string;
+  palette?: Theme["palette"];
+  shape?: Theme["shape"];
+  typography?: Theme["typography"];
 }
